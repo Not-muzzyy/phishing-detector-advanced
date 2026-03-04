@@ -11,11 +11,13 @@ Features:
 
 from __future__ import annotations
 
+import json
+import os
 import re
 import socket
+import time
 import urllib.parse
-from email import message_from_string
-from email.header import decode_header
+import urllib.request
 from html.parser import HTMLParser
 
 import streamlit as st
@@ -79,6 +81,78 @@ st.markdown("""
   <p style='color:#8899bb; margin-top:0.3rem'>ML-powered · No hardcoded rules · 4-layer analysis</p>
 </div>
 """, unsafe_allow_html=True)
+
+# ─── LLM Threat Reasoning (Groq) ─────────────────────────────────────────────
+
+def run_groq_analysis(
+    message_text: str,
+    url: str,
+    rule_score: float,
+    signals: list[str],
+) -> dict:
+    """Call Groq API with Llama 3 to get AI threat assessment."""
+    api_key = os.getenv("GROQ_API_KEY")
+    if not api_key:
+        return {"error": "GROQ_API_KEY not set"}
+
+    signals_text = "\n".join(signals) if signals else "No rule-based signals found"
+    prompt = f"""You are a cybersecurity expert analyzing a potential phishing attempt.
+
+Analyze the following and respond ONLY with a valid JSON object — no markdown, no explanation outside JSON.
+
+INPUT:
+- Message: "{message_text or 'Not provided'}"
+- URL: "{url or 'Not provided'}"
+- Rule-based phishing score: {rule_score:.2f} out of 1.0
+- Detected signals: {signals_text}
+
+Respond with exactly this JSON structure:
+{{
+  "threat_level": "LOW" or "MEDIUM" or "HIGH" or "CRITICAL",
+  "attack_type": "one short phrase e.g. Banking Credential Phishing",
+  "confidence": number between 0.0 and 1.0,
+  "explanation": "2-3 sentence explanation of why this is or is not phishing",
+  "target": "who is being targeted e.g. Indian banking customers",
+  "recommended_action": "one clear sentence on what the user should do"
+}}"""
+
+    payload = json.dumps({
+        "model": "llama3-8b-8192",
+        "messages": [{"role": "user", "content": prompt}],
+        "temperature": 0.1,
+        "max_tokens": 400,
+    }).encode("utf-8")
+
+    for attempt in range(3):
+        try:
+            req = urllib.request.Request(
+                "https://api.groq.com/openai/v1/chat/completions",
+                data=payload,
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + api_key,
+                },
+                method="POST",
+            )
+            with urllib.request.urlopen(req, timeout=15) as resp:
+                data = json.loads(resp.read().decode("utf-8"))
+                content = data["choices"][0]["message"]["content"]
+                content = re.sub(r"```json|```", "", content).strip()
+                return json.loads(content)
+        except Exception as e:
+            if attempt < 2:
+                time.sleep(2 ** attempt)
+            else:
+                return {"error": str(e)}
+    return {"error": "Max retries exceeded"}
+
+
+THREAT_COLORS = {
+    "LOW": "#25C281",
+    "MEDIUM": "#F6C445",
+    "HIGH": "#F08C2E",
+    "CRITICAL": "#E35252",
+}
 
 # ─── Analysis functions ───────────────────────────────────────────────────────
 
@@ -541,6 +615,32 @@ with tab1:
                         st.error("🚨 Domain is UNREACHABLE — fake or taken down link!")
                     elif url_result.get("reachable") is True:
                         st.success("✅ Domain resolves via DNS")
+
+                # ── AI Threat Assessment ──
+                st.markdown("---")
+                all_signals = text_result["signals"] + url_result["signals"]
+                if st.button("🧠 Get AI Threat Assessment", use_container_width=True):
+                    with st.spinner("Consulting AI security analyst via Groq..."):
+                        ai = run_groq_analysis(message_text, url_input, final_score, all_signals)
+                    if "error" in ai:
+                        st.warning("AI unavailable: " + ai["error"])
+                    else:
+                        threat = ai.get("threat_level", "UNKNOWN")
+                        color = THREAT_COLORS.get(threat, "#4e8ef7")
+                        st.markdown(
+                            "<div style='background:rgba(21,29,44,0.9);border:1px solid " + color + ";"
+                            "border-radius:14px;padding:1.2rem;margin-top:0.5rem'>"
+                            "<div style='color:" + color + ";font-weight:700;font-size:1.1rem'>🧠 AI Assessment: " + threat + "</div>"
+                            "<div style='color:#90b4ff;margin-top:0.5rem'><b>Attack Type:</b> " + ai.get("attack_type", "Unknown") + "</div>"
+                            "<div style='color:#90b4ff'><b>Target:</b> " + ai.get("target", "Unknown") + "</div>"
+                            "<div style='color:#d3def4;margin-top:0.5rem'>" + ai.get("explanation", "") + "</div>"
+                            "<div style='background:rgba(78,142,247,0.15);border-radius:8px;padding:0.6rem;margin-top:0.8rem'>"
+                            "<b style='color:#4e8ef7'>Recommended Action:</b> "
+                            "<span style='color:#d3def4'>" + ai.get("recommended_action", "") + "</span>"
+                            "</div>"
+                            "</div>",
+                            unsafe_allow_html=True,
+                        )
         else:
             st.markdown("<div class='card' style='text-align:center;padding:3rem'>", unsafe_allow_html=True)
             st.markdown("### 👈 Enter a message and URL to analyze", unsafe_allow_html=True)
