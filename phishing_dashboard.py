@@ -97,7 +97,7 @@ def run_groq_analysis(message_text, url, rule_score, signals):
 
     try:
         body = json.dumps({
-            "model": "llama3-8b-8192",
+            "model": "llama3-70b-8192",
             "messages": [{"role": "user", "content": prompt}],
             "temperature": 0.1,
             "max_tokens": 400,
