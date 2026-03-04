@@ -141,7 +141,7 @@ Final Year BCA Student | Cybersecurity & Machine Learning Enthusiast
 Nandi Institute of Management & Science College, Ballari
 Vijayanagara Sri Krishnadevaraya University
 
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue?style=flat&logo=linkedin)](https://linkedin.com/in/muzammilc7)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue?style=flat&logo=linkedin)](https://linkedin.com/in/muzzammilc7)
 [![GitHub](https://img.shields.io/badge/GitHub-Follow-black?style=flat&logo=github)](https://github.com/Not-muzzyy)
 
 -----
