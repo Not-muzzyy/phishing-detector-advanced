@@ -72,6 +72,7 @@ st.markdown("""
 # Groq LLM Analysis
 
 def run_groq_analysis(message_text, url, rule_score, signals):
+    import http.client
     api_key = None
     try:
         api_key = st.secrets["GROQ_API_KEY"]
@@ -80,53 +81,52 @@ def run_groq_analysis(message_text, url, rule_score, signals):
     if not api_key:
         return {"error": "GROQ_API_KEY not set in Streamlit secrets"}
 
-    signals_text = "\n".join(signals) if signals else "No signals found"
+    signals_text = ", ".join(signals) if signals else "No signals found"
     prompt = (
-        "You are a cybersecurity expert. Analyze this potential phishing attempt.\n"
-        "Respond ONLY with valid JSON, no markdown, no extra text.\n\n"
-        "Message: " + str(message_text or "Not provided") + "\n"
-        "URL: " + str(url or "Not provided") + "\n"
-        "Rule score: " + str(round(rule_score, 2)) + "/1.0\n"
-        "Signals: " + signals_text + "\n\n"
-        "Return this exact JSON:\n"
-        "{\"threat_level\": \"LOW or MEDIUM or HIGH or CRITICAL\","
-        "\"attack_type\": \"short phrase\","
-        "\"confidence\": 0.0,"
-        "\"explanation\": \"2-3 sentences\","
-        "\"target\": \"who is targeted\","
-        "\"recommended_action\": \"what user should do\"}"
+        "You are a cybersecurity expert. Analyze this potential phishing attempt. "
+        "Respond ONLY with valid JSON, no markdown, no extra text. "
+        "Message: " + str(message_text or "Not provided") + ". "
+        "URL: " + str(url or "Not provided") + ". "
+        "Rule score: " + str(round(rule_score, 2)) + " out of 1.0. "
+        "Signals detected: " + signals_text + ". "
+        "Return exactly this JSON structure: "
+        "{\"threat_level\": \"HIGH\", \"attack_type\": \"Banking Phishing\", "
+        "\"confidence\": 0.9, \"explanation\": \"your explanation\", "
+        "\"target\": \"who is targeted\", \"recommended_action\": \"what to do\"}"
     )
 
-    payload = json.dumps({
-        "model": "llama3-8b-8192",
-        "messages": [{"role": "user", "content": prompt}],
-        "temperature": 0.1,
-        "max_tokens": 400,
-    }).encode("utf-8")
-
-    for attempt in range(3):
-        try:
-            req = urllib.request.Request(
-                "https://api.groq.com/openai/v1/chat/completions",
-                data=payload,
-                headers={
-                    "Content-Type": "application/json",
-                    "Authorization": "Bearer " + api_key,
-                },
-                method="POST",
-            )
-            with urllib.request.urlopen(req, timeout=15) as resp:
-                data = json.loads(resp.read().decode("utf-8"))
-                content = data["choices"][0]["message"]["content"]
-                content = re.sub(r"```json|```", "", content).strip()
-                return json.loads(content)
-        except Exception as e:
-            if attempt < 2:
-                time.sleep(2 ** attempt)
-            else:
-                return {"error": str(e)}
-    return {"error": "Max retries exceeded"}
-
+    try:
+        body = json.dumps({
+            "model": "llama3-8b-8192",
+            "messages": [{"role": "user", "content": prompt}],
+            "temperature": 0.1,
+            "max_tokens": 400,
+        })
+        conn = http.client.HTTPSConnection("api.groq.com", timeout=20)
+        conn.request(
+            "POST",
+            "/openai/v1/chat/completions",
+            body=body,
+            headers={
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + api_key,
+            }
+        )
+        response = conn.getresponse()
+        raw = response.read().decode("utf-8")
+        conn.close()
+        if response.status != 200:
+            return {"error": "HTTP " + str(response.status) + " - " + raw[:300]}
+        data = json.loads(raw)
+        content = data["choices"][0]["message"]["content"]
+        content = re.sub(r"```json|```", "", content).strip()
+        start = content.find("{")
+        end = content.rfind("}") + 1
+        if start != -1 and end > start:
+            content = content[start:end]
+        return json.loads(content)
+    except Exception as e:
+        return {"error": str(e)}
 
 THREAT_COLORS = {
     "LOW": "#25C281",
