@@ -69,31 +69,32 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# LLM Threat Reasoning via Groq
+# Groq LLM Analysis
 
 def run_groq_analysis(message_text, url, rule_score, signals):
-    api_key = os.getenv("GROQ_API_KEY")
+    api_key = None
+    try:
+        api_key = st.secrets["GROQ_API_KEY"]
+    except Exception:
+        api_key = os.getenv("GROQ_API_KEY")
     if not api_key:
         return {"error": "GROQ_API_KEY not set in Streamlit secrets"}
 
-    signals_text = "\n".join(signals) if signals else "No rule-based signals found"
+    signals_text = "\n".join(signals) if signals else "No signals found"
     prompt = (
-        "You are a cybersecurity expert analyzing a potential phishing attempt.\n\n"
-        "Analyze the following and respond ONLY with a valid JSON object, no markdown, no text outside JSON.\n\n"
-        "INPUT:\n"
-        "- Message: \"" + (message_text or "Not provided") + "\"\n"
-        "- URL: \"" + (url or "Not provided") + "\"\n"
-        "- Rule-based phishing score: " + str(round(rule_score, 2)) + " out of 1.0\n"
-        "- Detected signals:\n" + signals_text + "\n\n"
-        "Respond with exactly this JSON:\n"
-        "{\n"
-        "  \"threat_level\": \"LOW\" or \"MEDIUM\" or \"HIGH\" or \"CRITICAL\",\n"
-        "  \"attack_type\": \"one short phrase\",\n"
-        "  \"confidence\": 0.0 to 1.0,\n"
-        "  \"explanation\": \"2-3 sentences explaining why this is or is not phishing\",\n"
-        "  \"target\": \"who is being targeted\",\n"
-        "  \"recommended_action\": \"one clear sentence on what the user should do\"\n"
-        "}"
+        "You are a cybersecurity expert. Analyze this potential phishing attempt.\n"
+        "Respond ONLY with valid JSON, no markdown, no extra text.\n\n"
+        "Message: " + str(message_text or "Not provided") + "\n"
+        "URL: " + str(url or "Not provided") + "\n"
+        "Rule score: " + str(round(rule_score, 2)) + "/1.0\n"
+        "Signals: " + signals_text + "\n\n"
+        "Return this exact JSON:\n"
+        "{\"threat_level\": \"LOW or MEDIUM or HIGH or CRITICAL\","
+        "\"attack_type\": \"short phrase\","
+        "\"confidence\": 0.0,"
+        "\"explanation\": \"2-3 sentences\","
+        "\"target\": \"who is targeted\","
+        "\"recommended_action\": \"what user should do\"}"
     )
 
     payload = json.dumps({
@@ -134,7 +135,7 @@ THREAT_COLORS = {
     "CRITICAL": "#E35252",
 }
 
-# Analysis constants
+# Constants
 
 PHISHING_KEYWORDS = [
     "verify", "urgent", "account", "suspended", "click here", "login",
@@ -154,7 +155,7 @@ LEGIT_DOMAINS = ["google.com", "microsoft.com", "apple.com", "amazon.com", "payp
 CRITICAL_KEYWORDS = ["paytm", "sbi", "hdfc", "icici", "verify", "secure", "login", "account"]
 
 VALID_URL_PATTERN = re.compile(
-    r"^(https?://)?([\w\-]+\.)+[\w]{2,}(/.*)?$", re.IGNORECASE
+    r"^(https?://)?((\d{1,3}\.){3}\d{1,3}|[\w\-]+(\.[\w\-]+)+)(/.*)?$", re.IGNORECASE
 )
 
 
@@ -697,6 +698,6 @@ HTML email and SMTP analysis suggested by **Jason Monroe** on LinkedIn.
 
 st.markdown("""
 <div style='text-align:center;color:#4a5568;font-size:0.8rem;margin-top:2rem'>
-  Built by Mohammed Muzamil C - 
+  Built by Mohammed Muzamil C - Ballari, Karnataka
 </div>
 """, unsafe_allow_html=True)
