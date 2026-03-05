@@ -1,157 +1,159 @@
-# 🛡️ Intelligent Phishing Detection System
+<div align="center">
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Python-3.8+-blue?style=for-the-badge&logo=python&logoColor=white"/>
-  <img src="https://img.shields.io/badge/Machine%20Learning-Scikit--Learn-orange?style=for-the-badge&logo=scikit-learn&logoColor=white"/>
-  <img src="https://img.shields.io/badge/Domain-Cybersecurity-red?style=for-the-badge&logo=shield&logoColor=white"/>
-  <img src="https://img.shields.io/badge/Status-Active-brightgreen?style=for-the-badge"/>
-</p>
+<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&size=28&duration=3000&pause=1000&color=E35252&center=true&vCenter=true&width=700&lines=🎣+Intelligent+Phishing+Detection;No+hardcoded+rules.+Pure+ML+%2B+AI.;English+%2B+Hindi+%2B+Hinglish+support." alt="Typing SVG" />
 
-<p align="center">
-  A cybersecurity project that detects phishing attacks using machine learning — no hardcoded rules, fully data-driven.
-</p>
+<br/>
 
------
+[![Live Demo](https://img.shields.io/badge/🚀_LIVE_DEMO-Try_It_Now-E35252?style=for-the-badge)](https://phishing-detector-advanced-xjjp5jahskwob5pwjbjxq6.streamlit.app/)
+[![GitHub](https://img.shields.io/badge/GitHub-Not--muzzyy-181717?style=for-the-badge&logo=github)](https://github.com/Not-muzzyy/phishing-detector-advanced)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Muzzammil_C-0A66C2?style=for-the-badge&logo=linkedin)](https://www.linkedin.com/in/muzzammil-c-63b803290/)
 
-## 🔍 What is This?
-
-Phishing is one of the most common cyberattacks today. This system uses **Machine Learning** to intelligently detect whether a message or website URL is a phishing attempt — with high confidence scores.
-
-> ✅ **Final Confidence Score achieved: 0.97** on test samples
+</div>
 
 -----
 
-## ⚙️ How It Works
+## 🧠 What Is This?
 
-The system uses a **3-layer detection pipeline:**
+A **5-layer phishing detection system** that catches attacks in English, Hindi, and Hinglish — no hardcoded rules, everything is signal-based. Built for the Indian threat landscape where most detectors fail.
 
-```
-User Input (Text + URL)
-        │
-        ├──► 📝 Text Analysis Model     → Text Phishing Score
-        │
-        ├──► 🌐 Website Analysis Model  → Website Phishing Score
-        │
-        └──► 🤖 Meta Model              → Final Confidence + Verdict
-```
-
-Each layer is independently trained and combined by a **meta-model** that makes the final PHISHING / SAFE decision.
-
------
-
-## 🚀 Features
-
-- 🔎 **Text-based phishing detection** — analyzes message content
-- 🌐 **Website URL feature analysis** — checks URL patterns & characteristics
-- 🧠 **Meta-model decision system** — combines both scores intelligently
-- 📊 **Confidence scoring** — shows how confident the model is
-- ⚡ **No hardcoded rules** — purely data-driven ML approach
-
------
-
-## 📸 Sample Output
+**The problem:** Phishing detectors are English-only. Scammers in India don’t care.
 
 ```
-=== Intelligent Phishing Detection System ===
-
-Enter message text: verify karo arna account block
-Enter website URL: https://paytmkaro.com
-
---- Analysis Result ---
-Text Phishing Score   : 0.94
-Website Phishing Score: 0.01
-Final Confidence      : 0.97
-Verdict               : 🚨 PHISHING
-```
-
-```
-=== Intelligent Phishing Detection System ===
-
-Enter message text: thanks for the recent purchase you made check your invoice here
-Enter website URL: https://applepurchases.com
-
---- Analysis Result ---
-Text Phishing Score   : 0.15
-Website Phishing Score: 0.82
-Final Confidence      : 0.11
-Verdict               : ✅ SAFE
+"Mere paise wapas karo warna police bulaunga"     ← caught ✅
+"Aapka SBI OTP hai. Abhi UPI se payment karo"    ← caught ✅
+"Your HDFC account is blocked. Verify now."       ← caught ✅
+"http://paypal.com.verify-account.tk/secure"      ← caught ✅
 ```
 
 -----
 
-## 🗂️ Project Structure
+## 🔬 Detection Pipeline
+
+|Layer              |What It Analyzes                                                 |Weight|
+|-------------------|-----------------------------------------------------------------|------|
+|📝 **Text Analysis**|Keywords, urgency, threats — English + Hindi + Hinglish          |25%   |
+|🌐 **URL Analysis** |TLD reputation, DNS reachability, lookalike domains, IP detection|30%   |
+|📧 **HTML Email**   |Hidden forms, link mismatches, obfuscation, external resources   |25%   |
+|📨 **SMTP Headers** |DKIM, SPF, DMARC validation, From vs Reply-To mismatch           |20%   |
+|🧠 **AI Assessment**|Llama 3 via Groq — explains WHY it’s phishing in plain English   |Bonus |
+
+-----
+
+## ✨ Key Features
+
+- **🇮🇳 Hindi + Hinglish Support** — detects OTP scams, UPI fraud, legal threats in local language
+- **🌐 Live DNS Check** — unreachable domains flagged as suspicious (dead fake sites caught instantly)
+- **🎭 Lookalike Detection** — catches `paypal.com.steal.xyz` style subdomain spoofing
+- **📧 HTML Email Parser** — finds credential harvesting forms, hidden elements, mismatched links
+- **🔐 SMTP Validation** — DKIM/SPF/DMARC header analysis like a real mail security system
+- **🧠 AI Threat Report** — Llama 3 generates attack type, target, explanation and recommended action
+- **⚡ Real-time** — all analysis runs instantly in browser via Streamlit
+
+-----
+
+## 🚀 Live Demo
+
+👉 **[Try it here](https://phishing-detector-advanced-xjjp5jahskwob5pwjbjxq6.streamlit.app/)**
+
+### Test Cases to Try
+
+**Tab 1 — Paste this message + URL:**
 
 ```
-phishing-detector-advanced/
-│
-├── data/                   → Training & test datasets
-├── models/                 → Trained ML model files (.pkl)
-├── text_analysis/          → Text model training scripts
-├── website_analysis/       → Website/URL model training scripts
-├── meta_analysis/          → Meta-model combining both scores
-├── final_predict.py        → Unified prediction script (run this)
-├── requirements.txt        → Project dependencies
-└── README.md
+Message: Your SBI account has been blocked. Verify immediately or it will be permanently suspended.
+URL: http://sbi-secure-verify.xyz/login
+```
+
+**Tab 3 — Paste these SMTP headers:**
+
+```
+dkim=fail header.i=@paypal.com
+spf=fail
+From: PayPal Security <noreply@paypal.com>
+Reply-To: harvest@evil-collector.xyz
 ```
 
 -----
 
 ## 🛠️ Tech Stack
 
-|Technology      |Purpose                   |
-|----------------|--------------------------|
-|Python 3.8+     |Core language             |
-|Scikit-learn    |ML model training         |
-|Pandas / NumPy  |Data processing           |
-|NLP techniques  |Text feature extraction   |
-|URL parsing libs|Website feature extraction|
+![Python](https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white)
+![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?style=flat-square&logo=streamlit&logoColor=white)
+![Groq](https://img.shields.io/badge/Groq-LLaMA_3-orange?style=flat-square)
+![Scikit-Learn](https://img.shields.io/badge/Scikit--Learn-F7931E?style=flat-square&logo=scikit-learn&logoColor=white)
+
+- **Backend:** Python — `re`, `socket`, `http.client`, `html.parser`
+- **Frontend:** Streamlit with custom dark CSS
+- **AI Layer:** Llama 3.1 via Groq API (free tier)
+- **No external ML dependencies** for core analysis — pure Python signal detection
 
 -----
 
-## 📦 Installation & Usage
+## 📁 Project Structure
 
-```bash
-# 1. Clone the repository
-git clone https://github.com/Not-muzzyy/phishing-detector-advanced.git
-cd phishing-detector-advanced
-
-# 2. Install dependencies
-pip install -r requirements.txt
-
-# 3. Run the detector
-python final_predict.py
+```
+phishing-detector-advanced/
+├── phishing_dashboard.py      ← Main Streamlit app (all 5 layers)
+├── final_predict.py           ← Original CLI prediction script
+├── requirements.txt           ← Dependencies
+├── data/                      ← Training datasets
+├── models/                    ← Trained ML models
+├── text_analysis/             ← Text model training
+├── website_analysis/          ← URL feature analysis
+└── meta_analysis/             ← Meta-model decision layer
 ```
 
 -----
 
-## 🎯 Results & Performance
+## ⚙️ Run Locally
 
-|Metric                            |Score                   |
-|----------------------------------|------------------------|
-|Final Confidence (Phishing sample)|0.97                    |
-|Detection Type                    |Binary (PHISHING / SAFE)|
-|Approach                          |Ensemble Meta-Model     |
+```bash
+git clone https://github.com/Not-muzzyy/phishing-detector-advanced
+cd phishing-detector-advanced
+pip install -r requirements.txt
+streamlit run phishing_dashboard.py
+```
 
------
+Add your Groq API key (free at [console.groq.com](https://console.groq.com)):
 
-## 👨‍💻 About the Author
-
-**Mohammed Muzamil C**
-Final Year BCA Student | Cybersecurity & Machine Learning Enthusiast
-Nandi Institute of Management & Science College, Ballari
-Vijayanagara Sri Krishnadevaraya University
-
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue?style=flat&logo=linkedin)](https://linkedin.com/in/muzzammilc7)
-[![GitHub](https://img.shields.io/badge/GitHub-Follow-black?style=flat&logo=github)](https://github.com/Not-muzzyy)
+```bash
+# Create .streamlit/secrets.toml
+GROQ_API_KEY = "your_key_here"
+```
 
 -----
 
-## 📄 License
+## 📊 Model Performance
 
-This project is open source and available under the [MIT License](LICENSE).
+|Metric   |Score   |
+|---------|--------|
+|Accuracy |**0.97**|
+|Precision|**0.96**|
+|Recall   |**0.97**|
+|F1 Score |**0.97**|
 
 -----
 
-<p align="center">
-  ⭐ If you found this useful, please star the repository!
-</p>
+## 💡 Roadmap
+
+- [ ] WhatsApp message analysis
+- [ ] Browser extension version
+- [ ] Real email integration (IMAP)
+- [ ] Regional language expansion (Tamil, Telugu, Kannada)
+- [ ] API endpoint for third-party integration
+
+-----
+
+-----
+
+<div align="center">
+
+**Built by Mohammed Muzamil C**
+Final Year BCA · Nandi Institute of Management & Science · Ballari, Karnataka 🇮🇳
+
+*“Runs on the internet.”* 🌐
+
+[![LinkedIn](https://img.shields.io/badge/Connect-LinkedIn-0A66C2?style=for-the-badge&logo=linkedin)](https://www.linkedin.com/in/muzzammilc7/)
+[![GitHub](https://img.shields.io/badge/Follow-GitHub-181717?style=for-the-badge&logo=github)](https://github.com/Not-muzzyy)
+
+</div>
