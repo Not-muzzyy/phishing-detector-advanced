@@ -698,6 +698,6 @@ HTML email and SMTP analysis suggested by **Jason Monroe** on LinkedIn.
 
 st.markdown("""
 <div style='text-align:center;color:#4a5568;font-size:0.8rem;margin-top:2rem'>
-  Built by Mohammed Muzamil C - Ballari, Karnataka
+  Built by Mohammed Muzamil C
 </div>
 """, unsafe_allow_html=True)
