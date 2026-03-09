@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "phishing-detector": {
+      "command": "python",
+      "args": ["mcp_server.py"],
+      "env": {
+        "GROQ_API_KEY": "your_groq_key_here"
+      }
+    }
+  }
+}
