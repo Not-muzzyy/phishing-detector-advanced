@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&size=28&duration=3000&pause=1000&color=E35252&center=true&vCenter=true&width=700&lines=🎣+Intelligent+Phishing+Detection;No+hardcoded+rules.+Pure+ML+%2B+AI.;English+%2B+Hindi+%2B+Hinglish+support." alt="Typing SVG" />
+<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&size=28&duration=3000&pause=1000&color=E35252&center=true&vCenter=true&width=700&lines=🎣+Intelligent+Phishing+Detection;Signal-based+ML+%2B+AI+analysis.;English+%2B+Hindi+%2B+Hinglish+support." alt="Typing SVG" />
 
 <br/>
 
@@ -14,7 +14,7 @@
 
 ## 🧠 What Is This?
 
-A **5-layer phishing detection system** that catches attacks in English, Hindi, and Hinglish — no hardcoded rules, everything is signal-based. Built for the Indian threat landscape where most detectors fail.
+A **5-layer phishing detection system** that catches attacks in English, Hindi, and Hinglish using signal-based machine learning, heuristic analysis, and AI reasoning. Built for the Indian threat landscape where most detectors fail.
 
 **The problem:** Phishing detectors are English-only. Scammers in India don’t care.
 
@@ -111,14 +111,27 @@ phishing-detector-advanced/
 git clone https://github.com/Not-muzzyy/phishing-detector-advanced
 cd phishing-detector-advanced
 pip install -r requirements.txt
-streamlit run phishing_dashboard.py
 ```
 
-Add your Groq API key (free at [console.groq.com](https://console.groq.com)):
+### Environment Setup
+
+Create a `.env` file:
+
+```env
+GROQ_API_KEY=your_groq_api_key_here
+```
+
+Or use Streamlit secrets:
+
+```toml
+# .streamlit/secrets.toml
+GROQ_API_KEY = "your_key_here"
+```
+
+Run the dashboard:
 
 ```bash
-# Create .streamlit/secrets.toml
-GROQ_API_KEY = "your_key_here"
+streamlit run phishing_dashboard.py
 ```
 
 -----
@@ -134,6 +147,22 @@ GROQ_API_KEY = "your_key_here"
 
 -----
 
+## ⚠️ Disclaimer
+
+This project is intended for:
+- cybersecurity education
+- phishing awareness
+- defensive research
+- safe testing environments
+
+Do not use this repository for:
+- phishing campaigns
+- credential theft
+- malicious automation
+- bypassing security systems
+
+-----
+
 ## 💡 Roadmap
 
 - [ ] WhatsApp message analysis
@@ -141,8 +170,6 @@ GROQ_API_KEY = "your_key_here"
 - [ ] Real email integration (IMAP)
 - [ ] Regional language expansion (Tamil, Telugu, Kannada)
 - [ ] API endpoint for third-party integration
-
------
 
 -----
 
